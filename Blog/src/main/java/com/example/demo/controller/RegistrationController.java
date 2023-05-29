@@ -11,13 +11,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
+//
 @RequestMapping("/register")
 public class RegistrationController {
     @Autowired
     private UserRepository userRepository;
-
-    @Autowired
-    private PasswordEncoder passwordEncoder;
 
     @GetMapping
     public String showRegistrationForm() {
@@ -38,9 +36,7 @@ public class RegistrationController {
             return "register"; // 返回注册页面的视图名称
         }
 
-        // 对密码进行加密
-        String encodedPassword = passwordEncoder.encode(user.getPassword());
-        user.setPassword(encodedPassword);
+ //       user.setPassword(encodedPassword);
 
         // 保存用户到数据库
         userRepository.save(user);
