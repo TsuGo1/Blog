@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @Controller
 @RequestMapping("/admin")
 public class LoginController {
-	//ログイン画面を表示
+	// 显示登录界面。
 		@GetMapping("/login")
 		public String getLoginPage() {
 			return "admin_login.html";

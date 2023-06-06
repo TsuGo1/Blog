@@ -8,22 +8,21 @@ import com.example.demo.model.entity.BlogEntity;
 import jakarta.transaction.Transactional;
 @Repository
 public interface BlogDao extends JpaRepository<BlogEntity, Long> { 
-	//ブログの内容を保存
+	// 保存博客内容。
 	BlogEntity save(BlogEntity blogEntity);
-	//ブログテーブルのuser_idとアカウントテーブルのuserIdを使ってテーブルを結合させてuserIdで検索をかけてデータを取得
-	@Query(value="SELECT b.blog_id,b.blog_title,b.blog_image,b.category_name,b.message,b.user_id From blog b INNER JOIN account a ON b.user_id = a.user_id WHERE b.user_id=?1",nativeQuery = true)
+	// 使用博客表中的user_id和账户表中的userId来连接表，并通过userId搜索来获取数据。
 	List<BlogEntity>findByUserId(Long userId);
 
-	//blogIdを使用してDBに検索をかける
+	//使用blogId搜索数据库
 	BlogEntity findByBlogId(Long blogId);
 	
-	//ブログテーブルのすべての情報を取得
+	// 获取博客表中的所有信息
 	List<BlogEntity>findAll();
 	
-	//カテゴリー名を使用して、DBに検索をかける
+	// 使用类别名称搜索数据库
 	List<BlogEntity>findByCategoryName(String categoryName);
 
-	//blogIdを取得して該当するブログ情報を削除する
+	//获取blogId并删除相应的博客信息。
 	@Transactional
 	List<BlogEntity> deleteByBlogId(Long blogId);
 }

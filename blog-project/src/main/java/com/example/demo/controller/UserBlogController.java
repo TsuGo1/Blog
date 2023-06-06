@@ -19,69 +19,69 @@ import com.example.demo.service.CategoryService;
 @RequestMapping("/blog")
 public class UserBlogController {
 	/**
-	 * blogテーブルを操作するための
-	 * Serviceクラス
+	 * 要操作博客表。
+	 *Service类。
 	 */
 	@Autowired
 	BlogService blogService;
 	/**
-	 * categoryテーブルを操作するための
-	 * Serviceクラス
+	 *操作类别表。
+	 *Service类。
 	 */
 	@Autowired
 	CategoryService categoryServie;
 
 	/**
-	 * blogテーブルから全てのブログ記事を取得
-	 * categoryテーブルから全てのカテゴリを取得
-	 * 取得した情報をセットして画面から参照可能にします。
+	 *从博客表中获取所有的博客文章
+	 *从类别表中检索所有的类别。
+	 *设置检索到的信息并使其在屏幕上可供参考。
 	 */
-	//ブログ画面の表示（ログイン操作無し）
+	// 显示博客屏幕（无登录操作）。
 	@GetMapping("/")
 	public String getBlogUserPage(Model model) {
-		//ブログの情報を全て取得する
+		//获取博客上的所有信息。
 		List<BlogEntity>blogList = blogService.selectByAll();
 		model.addAttribute("blogList",blogList);
-		//カテゴリの情報を全て取得する
+		//获取该类别的所有信息。
 		List<CategoryEntity>categoryList = categoryServie.findByAll();
 		model.addAttribute("categoryList",categoryList);
 		return "blog.html";
 	}
 	/**
-	 * ブログ記事詳細画面を表示するための処理です。
-	 * blogIdに紐づく内容をblogテーブルから取得
-	 * categoryテーブルから全てのカテゴリを取得
-	 * 取得した情報をセットして画面から参照可能にします。
+	 * 显示博客文章详情屏幕的过程。
+	 * 从博客表中获取与blogId相关的内容。
+	 * 从类别表中获取所有类别。
+	 * 设置获得的信息，并使其可用于屏幕上的参考。
 	 */
 	@GetMapping("/detail/{blogId}")
 	public String getBlogUserDetailPage(@PathVariable Long blogId, Model model) {
-		//blogのテーブルの中から、blogIdで検索をかけて該当する該当するブログの情報を引っ張り出す。
+		//在博客表中通过blogId进行搜索，拉出相关的相关博客的信息。
 		BlogEntity blogs = blogService.selectByBlogId(blogId);
-		//カテゴリの情報を全て取得する
+		// 获取该类别的所有信息。
 		List<CategoryEntity>categoryList = categoryServie.findByAll();
-		//blogｓ（ブログ記事詳細情報）とcategoryList（カテゴリ一覧）をmodelにセットし
-		//blog_detail.htmlから参照可能にする。
+		//blogs（详细的博客文章信息）和categoryList（类别列表）被设置在模型和
+		//blog_detail.html中，以使它们可供参考。
 		model.addAttribute("categoryList",categoryList);
 		model.addAttribute("blogs",blogs);	
 		return "blog_detail.html";
 	}
 	/**
-	 * ブログの記事をカテゴリ別に表示するための処理
-	 * categoryNameに紐づく内容をblogテーブルから取得
-	 * categoryテーブルから全てのカテゴリを取得
-	 * 取得した情報をセットして画面から参照可能にします。
+	 * 按类别显示博客文章的处理。
+	 *从博客表中检索与categoryName相关的内容
+	 *从类别表中检索所有的类别
+	 * 设置获取的信息，并使其可在屏幕上参考。
 	 */
 	@GetMapping("/category/list/{categoryName}")
 	public String getBlogCategoryAllPage(@PathVariable String categoryName, Model model) {
-		//blogのテーブルの中から、categoryNameで検索をかけて該当する該当するブログの情報を引っ張り出す。
+		//通过搜索categoryName，从blog表中提取相关的相关博客的信息。
 		List<BlogEntity> blogList = blogService.selectByCategoryName(categoryName);
-		//カテゴリの情報を全て取得する
+		//获取该类别的所有信息。
 		List<CategoryEntity>categoryList = categoryServie.findByAll();
 		model.addAttribute("categoryList",categoryList);
 		model.addAttribute("categoryName",categoryName);
 		model.addAttribute("blogList",blogList);	
-		//blogＬｉｓｔ（ブログ記事一覧）とcategoryList（カテゴリ一覧）とcategoryName(カテゴリー名）をmodelにセットし
-		//blog_category_list.htmlから参照可能にする。
+		//将blogList（博客文章列表）、categoryList（类别列表）和categoryName（类别名称）设置为模型，并且
+		//使它们可以从blog_category_list.html中引用。
 		return "blog_category_list.html";
 	}
 }

@@ -25,7 +25,7 @@ public class WebSecurityConfig  {
 	        http.formLogin(login -> login
 	                .loginPage("/admin/login")
 	                .defaultSuccessUrl("/admin/blog/all",true)  
-	                .usernameParameter("userEmail") //リクエストパラメータのname属性を明示
+	                .usernameParameter("userEmail") //请求参数的明确名称属性
 	        		.passwordParameter("password")
 	                .failureUrl("/admin/login?error")
 	                .permitAll()

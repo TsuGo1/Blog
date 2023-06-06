@@ -35,92 +35,78 @@ import com.example.demo.service.UserService;
 @RequestMapping("/admin/blog")
 public class AdminBlogController {
 	/**
-	 * accountテーブルを操作するための
-	 * Serviceクラス
+	 * account操作
+	 * Service
 	 */
 	@Autowired
 	private UserService userService;
 	/**
-	 * blogテーブルを操作するための
-	 * Serviceクラス
+	 * blog操作
+	 * Service
 	 */
 	@Autowired
 	BlogService blogService;
 	/**
-	 * categoryテーブルを操作するための
-	 * Serviceクラス
+	 * category操作
+	 * Service
 	 */
 	@Autowired
 	CategoryService categoryServie;
 
 
 	/*
-	 * 管理者側の処理
+	 * 登录处理
 	 */
 
-	/**
-	 * 現在ログインしている人が記載した記事の一覧を出すための処理です。
-	 * ―ログインしている人のメールアドレスを使用して、ログインしている人のuserIdとuserNameを取得します。
-	 * ―取得したuserIdを使用してログインしている人のブログ記事を取得します。
-	 * ―取得した情報をセットして画面から参照可能にします。
-	 */
-	//管理者側のブログ一覧を表示
+	//在管理员那边显示博客的列表
 	@GetMapping("/all")
 	public String getLoginPage(Model model) {
-		//		現在のリクエストに紐づく Authentication を取得するには SecurityContextHolder.getContext().getAuthentication() とする。
-		//		SecurityContextHolder.getContext() は、現在のリクエストに紐づく SecurityContext を返している。
-		//		Authentication.getAuthorities() で、現在のログインユーザーに付与されている権限（GrantedAuthority のコレクション）を取得できる。
+		// SecurityContextHolder.getContext().getAuthentication()获得与当前请求相关的认证。
+		// SecurityContextHolder.getContext() 返回与当前请求相关的SecurityContext。
+		// Authentication.getAuthorities() 允许检索授予当前登录用户的权限（GrantedAuthorities的集合）。
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 
-		//ログインした人のメールアドレスを取得
+		//获取登录者的电子邮件地址。
 		String userEmail = auth.getName();
-		//accountテーブルの中から、ユーザーのEmailで検索をかけて該当するユーザーのID情報を引っ張り出す。
+		//从ACCOUNT表中，用用户的Email进行搜索，调出相关用户的ID信息。
 		UserEntity user = userService.selectById(userEmail);
 
-		//accountテーブルの中からログインしているユーザーの名前の取得
+		//从ACCOUNT表中检索登录用户的名字。
 		String userName = user.getUserName();
 
-		//accountテーブルの中からログインしているユーザーのIDを取得
+		//从ACCOUNT表中获取登录用户的ID。
 		Long userId = user.getUserId();
 
-		//ブログテーブルの中からユーザーIDを使って、そのユーザーが書いたブログ記事のみを取得する
+		//使用用户ID在博客表中只检索用户写的博客文章。
 		List<BlogEntity>blogList = blogService.selectByUserId(userId);
-		//blogList（ブログの記事一覧情報）とuserName（管理者の名前）をmodelにセットし
-		//admin_blog_all.htmlから参照可能にする。
+		//blogList（博文列表信息）和userName（管理员的名字）在模型中被设置，并且
+		//使其可以从admin_blog_all.html中引用。
 		model.addAttribute("blogList",blogList);
 		model.addAttribute("userName",userName);
 		return "admin_blog_all.html";
 	}
 
-
-	/**
-	 * ブログ記事の登録画面を表示させるための処理です。
-	 * ―ログインしている人のメールアドレスを使用して、ログインしている人のuserIdとuserNameを取得します。
-	 * ―カテゴリ一覧を取得します
-	 * ―取得した情報をセットして画面から参照可能にします。
-	 */
-
-	//ブログ記事の登録
+	//注册博文
 	@GetMapping("/register")
 	public String getBlogCreatePage(Model model) {
-		//		現在のリクエストに紐づく Authentication を取得するには SecurityContextHolder.getContext().getAuthentication() とする。
-		//		SecurityContextHolder.getContext() は、現在のリクエストに紐づく SecurityContext を返している。
-		//		Authentication.getAuthorities() で、現在のログインユーザーに付与されている権限（GrantedAuthority のコレクション）を取得できる。
+		// SecurityContextHolder.getContext().getAuthentication()获得与当前请求相关的认证。
+		// SecurityContextHolder.getContext() 返回与当前请求相关的SecurityContext。
+		// Authentication.getAuthorities() 允许检索授予当前登录用户的权限（GrantedAuthorities的集合）。
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-		//ログインした人のメールアドレスを取得
+		// 获取登录者的电子邮件地址。
 		String userEmail = auth.getName();
-		//accountテーブルの中から、ユーザーのEmailで検索をかけて該当するユーザーの情報を引っ張り出す。
+		//通过用户的Email在账户表中搜索，并调出相关用户的信息。
 		UserEntity user = userService.selectById(userEmail);
-		//accountテーブルの中からログインしているユーザーのIDを取得
+		//从账户表中获取登录用户的ID。
 		Long userId = user.getUserId();
-		//accountテーブルの中からログインしているユーザーの名前の取得
+		//从账户表中检索登录用户的名字
 		String userName = user.getUserName();
-		//カテゴリー一覧を取得
+		// 获得类别列表
 		List<CategoryEntity>categoryList = categoryServie.findByAll();
 
-		//userId（管理者のId）、categoryList（カテゴリ一覧）
-		//userName（管理者の名前）をmodelにセットし
-		//admin_blog_register.htmlから参照可能にする。
+		//userId (管理员的ID), categoryList (类别列表)
+		//userName（管理员的名字）设置为模型，并
+		//使其可以从admin_blog_register.html中引用。
 		model.addAttribute("userId",userId);
 		model.addAttribute("categoryList",categoryList);
 		model.addAttribute("userName",userName);
@@ -128,69 +114,63 @@ public class AdminBlogController {
 		return "admin_blog_register.html";
 	}
 
-	/**
-	 * ブログ記事を登録させるための処理です。
-	 * ―画像名を取得し、blog-imageにアップロードする作業を行います。
-	 * ―入力された情報によってblogテーブルに保存処理を行います。
-	 * ―保存処理後は、ブログ一覧画面にリダイレクトさせます。
-	 */
-	//登録内容を保存
+	// 保存注册信息。
 	@PostMapping("/register")
 	public String register(@RequestParam String blogTitle,@RequestParam("blogImage") MultipartFile blogImage,@RequestParam String categoryName,@RequestParam String message,@RequestParam Long userId) {
 
-		//画像ファイル名を取得する
+		// 获取图像文件名。
 		String fileName = blogImage.getOriginalFilename();
 
-		//ファイルのアップロード処理
+		// 文件上传过程。
 		try {
-			//画像ファイルの保存先を指定する。
+			// 指定图像文件的存储位置。
 			File blogFile = new File("./src/main/resources/static/blog-image/"+fileName);
-			//画像ファイルからバイナリデータを取得する
+			//从图像文件中获取二进制数据
 			byte[] bytes = blogImage.getBytes();
-			//画像を保存（書き出し）するためのバッファを用意する
+			//准备一个用于存储（导出）图像的缓冲区。
 			BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(blogFile));
-			//画像ファイルの書き出しする。
+			//输出图像文件。
 			out.write(bytes);
-			//バッファを閉じることにより、書き出しを正常終了させる。
+			//关闭缓冲区，以确保写出的内容正常结束。
 			out.close();
 		}catch(Exception e) {
 			e.printStackTrace();
 		}
-		//ファイルのアップロード処理後に、サービスクラスのメソッドに値を渡して保存する
+		//在文件上传处理后，将值传递给服务类的方法进行保存
 		blogService.insert(blogTitle, fileName, categoryName, message, userId);
 
 		return "redirect:/admin/blog/all";
 	}
 
 	/**
-	 * ブログ記事の編集画面を表示させるための処理です。
-	 * ―リンクからblogIdを取得する
-	 * ―blogIdに紐づくレコードを探す
-	 * ―取得した情報をセットして画面から参照可能にします。
+	 * 显示博客文章编辑页面的处理。
+	 * -从链接获取blogId
+	 * -找到与blogId关联的记录
+	 * -设置获取到的信息以便可以从页面查看。
 	 */
-	//リンクタグで記載したblogIdを取得する
+	//从链接标签获取blogId
 	@GetMapping("/edit/{blogId}")
 	public String getBlogDetailPage(@PathVariable Long blogId, Model model) {
-		//		現在のリクエストに紐づく Authentication を取得するには SecurityContextHolder.getContext().getAuthentication() とする。
-		//		SecurityContextHolder.getContext() は、現在のリクエストに紐づく SecurityContext を返している。
-		//		Authentication.getAuthorities() で、現在のログインユーザーに付与されている権限（GrantedAuthority のコレクション）を取得できる。
+		 //要获取与当前请求关联的Authentication，可以调用SecurityContextHolder.getContext().getAuthentication()
+	    //SecurityContextHolder.getContext()返回与当前请求关联的SecurityContext。
+	    //Authentication.getAuthorities()可以获取到当前登录用户赋予的权限（GrantedAuthority集合）
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-		//ログインした人のメールアドレスを取得
-		String userEmail = auth.getName();
-		//accountテーブルの中から、ユーザーのEmailで検索をかけて該当するユーザーの情報を引っ張り出す。
-		UserEntity user = userService.selectById(userEmail);
-		//accountテーブルの中から、ユーザー名を取得
-		String userName = user.getUserName();
-		//accountテーブルの中から、ユーザーIDを取得
-		Long userId = user.getUserId();
-		//カテゴリ―の一覧を取得
-		List<CategoryEntity>categoryList = categoryServie.findByAll();
-		//blogのテーブルの中から、blogIdで検索をかけて該当する該当するブログの情報を引っ張り出す。
-		BlogEntity blogs = blogService.selectByBlogId(blogId);
+		//获取登录用户的电子邮件地址
+	    String userEmail = auth.getName();
+	    //在account表中，通过用户的Email进行搜索，然后拉出相关的用户信息。
+	    UserEntity user = userService.selectById(userEmail);
+	    //从account表中，获取用户名
+	    String userName = user.getUserName();
+	    //从account表中，获取用户ID
+	    Long userId = user.getUserId();
+	    //获取类别列表
+	    List<CategoryEntity>categoryList = categoryServie.findByAll();
+	    //在blog表中，通过blogId进行搜索，然后拉出相关的博客信息。
+	    BlogEntity blogs = blogService.selectByBlogId(blogId);
 
-		//userId（管理者のId）、categoryList（カテゴリ一覧）
-		//userName（管理者の名前）、blogs(idに紐づいたブログ記事）をmodelにセットし
-		//admin_blog_edit.htmlから参照可能にする。
+	    //将userId（管理员的Id）、categoryList（类别列表）
+	    //userName（管理员的名字）、blogs(与id关联的博客文章）设置到model中
+	    //从admin_blog_edit.html中可以查看。
 		model.addAttribute("userId",userId);
 		model.addAttribute("blogs",blogs);	
 		model.addAttribute("categoryList",categoryList);
@@ -198,46 +178,46 @@ public class AdminBlogController {
 		return "admin_blog_edit.html";
 	}
 	/**
-	 * ブログ記事を更新させるための処理です。
-	 * ―画像名を取得し、blog-imageにアップロードする作業を行います。
-	 * ―入力された情報によってblogテーブルに更新処理を行います。
-	 * ―更新処理後は、ブログ一覧画面にリダイレクトさせます。
+	 * 更新博客文章的处理。
+	 * -获取图片名称，上传到blog-image。
+	 * -根据输入的信息在blog表中进行更新处理。
+	 * -更新处理后，将重定向到博客列表页面。
 	 */
-	//登録内容を修正（更新）
+	//修改（更新）登记内容
 	@PostMapping("/update")
 	public String updateData(@RequestParam Long blogId,@RequestParam String blogTitle,@RequestParam("blogImage") MultipartFile blogImage,@RequestParam String categoryName,@RequestParam String message,@RequestParam Long userId) {
-		//画像ファイル名を取得する
-		String fileName = blogImage.getOriginalFilename();
-		//ファイルのアップロード処理
-		try {
-			//画像ファイルの保存先を指定する。
-			File blogFile = new File("./src/main/resources/static/blog-image/"+fileName);
-			//画像ファイルからバイナリデータを取得する。
-			byte[] bytes = blogImage.getBytes();
-			//画像を保存（書き出し）するためのバッファを用意する。
-			BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(blogFile));
-			//画像ファイルの書き出しする。
-			out.write(bytes);
-			//バッファを閉じることにより、書き出しを正常終了させる。
-			out.close();
+		//获取图片文件名
+	    String fileName = blogImage.getOriginalFilename();
+	    //文件上传处理
+	    try {
+	        //指定图片文件保存的位置。
+	        File blogFile = new File("./src/main/resources/static/blog-image/"+fileName);
+	        //获取图片文件的二进制数据。
+	        byte[] bytes = blogImage.getBytes();
+	        //为保存（写出）图片准备缓冲区。
+	        BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(blogFile));
+	        //写出图片文件。
+	        out.write(bytes);
+	        //通过关闭缓冲区来正确结束写出。
+	        out.close();
 		}catch(Exception e) {
 			e.printStackTrace();
 		}
-		//ファイルのアップロード処理後に、サービスクラスのメソッドに値を渡して更新を行う。
+	    //在文件上传处理后，将值传递给服务类的方法进行更新。
 		blogService.update(blogId, blogTitle, fileName, categoryName, message, userId);
 
 		return "redirect:/admin/blog/all";
 	}
 
 	/**
-	 * ブログ記事を削除させるための処理です。
-	 * ―blogIdに紐づくレコードを探す
-	 * ―紐づくレコードを削除する
+	 * 删除博客文章的处理。
+	 * -查找与blogId关联的记录
+	 * -删除关联的记录
 	 */
-	//ブログの内容を削除
+	//删除博客内容
 	@PostMapping("/delete")
 	public String blogDelete(@RequestParam Long blogId) {
-		//Serviceクラスに値をわたし、削除処理を行う。
+		//将值传递给Service类，执行删除处理。
 		blogService.deleteBlog(blogId);
 		return "redirect:/admin/blog/all";
 	}

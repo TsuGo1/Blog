@@ -43,7 +43,7 @@
                     <a href=""><img th:src="@{\images\logo.png}"></a>
                 </div>
                 <ul class="pc-list">
-                <li class="pc-list__item"><a th:href="@{/login}">ログイン</a></li>
+                <li class="pc-list__item"><a th:href="@{/login}">注册</a></li>
                 </ul>
             </div>
         </nav>
@@ -51,7 +51,7 @@
     <main>
         <div class="main-inner">
             <section class="register-section">
-                <h2>管理者登録画面</h2>
+                <h2>注册界面</h2>
                 <form method="POST" th:action="@{/admin/register}">
                     <div class="register-section-details">
                         <div class="register-section-details_flex">
@@ -69,8 +69,8 @@
                     </div>
                     <div class="register-section-details_flex">
                        
-                            <button id="register" class="edit_disable">登録</button>
-                          <button class="delete" onclick="history.back();" type="button">戻る</button>
+                            <button id="register" class="edit_disable">注册</button>
+                          <button class="delete" onclick="history.back();" type="button">返回</button>
                        
                     </div>
                 </form>

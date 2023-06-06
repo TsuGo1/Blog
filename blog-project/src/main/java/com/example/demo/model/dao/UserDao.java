@@ -9,12 +9,12 @@ import com.example.demo.model.entity.UserEntity;
 @Repository
 public interface UserDao extends JpaRepository<UserEntity, Long> {
 	
-	// UserServiceから渡されるユーザ情報（メールアドレス）を条件にDB検索
+	// 根据从UserService传来的用户信息（电子邮件地址）进行DB搜索
 	UserEntity findByUserEmail(String userEmail);
 
-	// UserServiceから渡されるユーザ情報を基にDBへ保存する
+	// 根据从UserService传来的用户信息存储在数据库中
 	UserEntity save(UserEntity userEntity);
 
-	// ユーザ情報一覧を取得
+	// 获得一个用户信息的列表。
 	List<UserEntity> findAll();
 }

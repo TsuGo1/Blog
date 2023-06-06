@@ -27,11 +27,11 @@
 				<div class="menu-inner">
 					<ul>
 
-						<li class="menu__item"><a th:href="@{/admin/category/all}">カテゴリ一覧</a></li>
-						<li class="menu__item"><a th:href="@{/admin/blog/all}">投稿記事一覧</a></li>
+						<li class="menu__item"><a th:href="@{/admin/category/all}">分类列表</a></li>
+						<li class="menu__item"><a th:href="@{/admin/blog/all}">博客列表</a></li>
 						<li class="menu__item">
 							<form th:action="@{/logout}" method="post"><a href="#"
-									onclick="this.parentNode.submit()">ログアウト</a></form>
+									onclick="this.parentNode.submit()">注销</a></form>
 						</li>
 
 					</ul>
@@ -51,11 +51,11 @@
 				</div>
 				<ul class="pc-list">
 					<li class="pc-list__item" th:text=${userName}></li>
-					<li class="pc-list__item"><a th:href="@{/admin/category/all}">カテゴリ一覧</a></li>
-					<li class="pc-list__item"><a th:href="@{/admin/blog/all}">投稿記事一覧</a></li>
+					<li class="pc-list__item"><a th:href="@{/admin/category/all}">分类列表</a></li>
+					<li class="pc-list__item"><a th:href="@{/admin/blog/all}">博客列表</a></li>
 					<li class="pc-list__item">
 						<form th:action="@{/logout}" method="post"><a href="#"
-								onclick="this.parentNode.submit()">ログアウト</a></form>
+								onclick="this.parentNode.submit()">注销</a></form>
 					</li>
 
 				</ul>
@@ -65,19 +65,19 @@
 	<main>
 		<div class="main-inner">
 			<section class="register-section">
-				<h2>記事登録画面</h2>
+				<h2>博客编辑画面</h2>
 				<form method="POST" th:action="@{/admin/blog/register}" enctype="multipart/form-data">
 					<div class="register-section-details">
 						<div class="register-section-details_flex">
-							<div>タイトル</div>
+							<div>标题</div>
 							<input type="text" name="blogTitle">
 						</div>
 						<div class="register-section-details_flex">
-							<div>ブログ画像</div>
+							<div>博客图片</div>
 							<input type="file" name="blogImage">
 						</div>
 						<div class="register-section-details_flex">
-							<div>カテゴリー名</div>
+							<div>分类名称</div>
 							<select name="categoryName" id="">
 								<option th:each="category : ${categoryList}" th:value="${category.categoryName}"
 									th:text="${category.categoryName}">
@@ -85,13 +85,13 @@
 							</select>
 						</div>
 						<div class="register-section-details_flex">
-							<div>Message</div>
+							<div>内容</div>
 							<textarea name="message"></textarea>
 						</div>
 						<input type="hidden" name="userId" th:value="${userId}">
 						<div class="register-section-details_flex">
-							<button class="edit" id="register">登録</button>
-							<button class="back-btn" onclick="history.back();" type="button">戻る</button>'
+							<button class="edit" id="register">登录</button>
+							<button class="back-btn" onclick="history.back();" type="button">返回</button>'
 						</div>
 					</div>
 				</form>

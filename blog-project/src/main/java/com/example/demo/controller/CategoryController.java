@@ -23,131 +23,129 @@ import com.example.demo.service.UserService;
 public class CategoryController {
 
 	/**
-	 * categoryテーブルを操作するための
-	 * Serviceクラス
-	 */
-	@Autowired
-	private CategoryService categoryService;
+     * 用于操作category表的Service类
+     */
+    @Autowired
+    private CategoryService categoryService;
 
-	/**
-	 * accountテーブルを操作するための
-	 * Serviceクラス
-	 */
-	@Autowired
-	private UserService userService;
+    /**
+     * 用于操作account表的Service类
+     */
+    @Autowired
+    private UserService userService;
 
-	/**
-	 * category一覧画面を出すための処理です
-	 * ―ログインしている人のメールアドレスを使用して、ログインしている人のuserIdとuserNameを取得します。
-	 * ―Catgoery一覧を取得します。
-	 * ―取得した情報をセットして画面から参照可能にします。
-	 */
-	//カテゴリー一覧を表示
+    /**
+     * 显示category列表页面的处理。
+     * - 使用当前登录用户的电子邮件获取当前登录用户的userId和userName。
+     * - 获取category列表。
+     * - 将获取的信息设置到模型中，以便页面可以引用。
+     */
+	//分类列表表示
 	@GetMapping("/all")
 	public String getCategoryAll(Model model) {
-		//		現在のリクエストに紐づく Authentication を取得するには SecurityContextHolder.getContext().getAuthentication() とする。
-		//		SecurityContextHolder.getContext() は、現在のリクエストに紐づく SecurityContext を返している。
-		//		Authentication.getAuthorities() で、現在のログインユーザーに付与されている権限（GrantedAuthority のコレクション）を取得できる。
+		// SecurityContextHolder.getContext().getAuthentication()获得与当前请求相关的认证。
+		// SecurityContextHolder.getContext() 返回与当前请求相关的SecurityContext。
+		// Authentication.getAuthorities() 允许检索授予当前登录用户的权限（GrantedAuthorities的集合）。
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 
-		//ログインした人のメールアドレスを取得
+		// 获取登录者的电子邮件地址。
 		String userEmail = auth.getName();
-		//accountテーブルの中から、ユーザーのEmailで検索をかけて該当するユーザーのID情報を引っ張り出す。
+		//通过用户的Email在account中搜索，并调出相应用户的ID信息。
 		UserEntity user = userService.selectById(userEmail);
 
-		//accountテーブルの中からログインしているユーザーの名前の取得
+		//从account中检索登录用户的名字
 		String userName = user.getUserName();
-		//categoryテーブルに入っている内容を全て取得し、categorylistに格納する。
+		//获取category中的所有内容，并将其存储在categorylist中。
 		List<CategoryEntity>categorylist = categoryService.findByAll();
 
-		//categorylist（category一覧情報）とuserName（管理者の名前）をmodelにセットし
-		//admin_category_all.htmlから参照可能にする。
+		//在模型中设置categorylist（类别列表信息）和userName（管理员的名字），并且
+		//将categorylist（类别列表信息）和userName（管理员的名字）设置在模型中，并使之可从admin_category_all.html中获得参考。
 		model.addAttribute("categorylist",categorylist);
 		model.addAttribute("userName",userName);
 
 		return "admin_category_all.html";
 	}
 	/**
-	 * categoryの内容を保存する画面を表示する処理です。
-	 * ―ログインしている人のメールアドレスを使用して、ログインしている人のuserIdとuserNameを取得します。
-	 * ―取得した情報をセットして画面から参照可能にします。
+	 *显示屏幕保存类别内容的过程。
+	 * -获取登录者的userId和userName，使用登录者的电子邮件地址。
+	 * -设置检索到的信息，并使其可在屏幕上参考。
 	 */
-	//カテゴリー登録画面を表示
+	//显示类别注册画面。
 	@GetMapping("/register")
 	public String geCategoryListRegister(Model model) {
-		//		現在のリクエストに紐づく Authentication を取得するには SecurityContextHolder.getContext().getAuthentication() とする。
-		//		SecurityContextHolder.getContext() は、現在のリクエストに紐づく SecurityContext を返している。
-		//		Authentication.getAuthorities() で、現在のログインユーザーに付与されている権限（GrantedAuthority のコレクション）を取得できる。
+		// SecurityContextHolder.getContext().getAuthentication()获得与当前请求相关的认证。
+		// SecurityContextHolder.getContext() 返回与当前请求相关的SecurityContext。
+		// Authentication.getAuthorities() 允许检索授予当前登录用户的权限（GrantedAuthorities的集合）。
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 
-		//ログインした人のメールアドレスを取得
+		//获取登录者的电子邮件地址。
 		String userEmail = auth.getName();
 
-		//accountテーブルの中から、ユーザーのEmailで検索をかけて該当するユーザーのID情報を引っ張り出す。
+		//从ACCOUNT表中，用用户的Email进行搜索，调出相关用户的ID信息。
 		UserEntity user = userService.selectById(userEmail);
 
-		//accountテーブルの中からログインしているユーザーの名前の取得
+		//从ACCOUNT表中检索登录用户的名字。
 		String userName = user.getUserName();
 
-		//userName（管理者の名前）をmodelにセットし
-		//admin_category_register.htmlから参照可能にする。
+		//将userName（管理员的名字）设置为模型，并且
+	    //使其可以从admin_category_register.html中引用。
 		model.addAttribute("userName",userName);
 		return "admin_category_register.html";
 	}
 
 	/**
-	 * categoryの内容を保存する処理です。
-	 * ―入力された情報によってcategoryテーブルに保存処理を行います。
-	 * ―取得したuserIdを使用してログインしている人のブログ記事を取得します。
-	 * ―保存処理後は、Category一覧画面にリダイレクトさせます。
+	 * -存储类别内容的过程。
+	 * -根据输入的信息保存分类表的过程。
+	 * -使用检索到的userId获取登录者的博客文章。
+	 * -保存过程结束后，用户被重定向到类别列表界面。
 	 */
-	//カテゴリー登録内容を保存
+	// 保存类别的注册信息。
 	@PostMapping("/register")
 	public String register(@RequestParam String categoryName) {
-		//サービスクラスのメソッドに値を渡して保存する
+		// 向服务类的方法传递和存储数值。
 		categoryService.insert(categoryName);
 		return "redirect:/admin/category/all";
 	}
 
 	/**
-	 * categoryの編集画面を表示させるための処理です。
-	 * ―ログインしている人のメールアドレスを使用して、ログインしている人のuserIdとuserNameを取得します。
-	 * ―リンクからcategoryIdを取得する
-	 * ―categoryIdに紐づくレコードを探す
-	 * ―取得した情報をセットして画面から参照可能にします。
+	 * 显示类别编辑屏幕的过程。
+	 * -使用登录者的电子邮件地址，获取登录者的userId和userName。
+	 * -从链接中获取categoryId。
+	 * -找到与categoryId相关的记录。
+	 * -设置检索到的信息，并使其可从屏幕上引用。
 	 */
-	//カテゴリー編集画面の表示
+	// 显示类别编辑界面。
 	@GetMapping("/edit/{categoryId}")
 	public String getCategroyEditPage(@PathVariable Long categoryId,Model model) {
-		//		現在のリクエストに紐づく Authentication を取得するには SecurityContextHolder.getContext().getAuthentication() とする。
-		//		SecurityContextHolder.getContext() は、現在のリクエストに紐づく SecurityContext を返している。
-		//		Authentication.getAuthorities() で、現在のログインユーザーに付与されている権限（GrantedAuthority のコレクション）を取得できる。
+		// SecurityContextHolder.getContext().getAuthentication()获得与当前请求相关的认证。
+		// SecurityContextHolder.getContext() 返回与当前请求相关的SecurityContext。
+		// Authentication.getAuthorities() 允许检索授予当前登录用户的权限（GrantedAuthorities的集合）。
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 
-		//ログインした人のメールアドレスを取得
+		// 获取登录者的电子邮件地址。
 		String userEmail = auth.getName();
 
-		//accountテーブルの中から、ユーザーのEmailで検索をかけて該当するユーザーのID情報を引っ張り出す。
+		//通过用户的Email在account表中搜索，并调出相应用户的ID信息。
 		UserEntity user = userService.selectById(userEmail);
 
-		//accountテーブルの中からログインしているユーザーの名前の取得
+		//从account表中检索登录用户的名字
 		String userName = user.getUserName();
 
-		//categoryテーブルの中から、category_idで検索をかけて該当するcategory情報を引っ張り出す。
+		//通过搜索category_id，从category表中拉出相关的类别信息。
 		CategoryEntity categoryEntity = categoryService.selectCategoryId(categoryId);
 
-		//categoryEntity(category情報）とuserName（管理者の名前）をmodelにセットし
-		//admin_category_edit.htmlから参照可能にする。
+		//在模型中设置categoryEntity（类别信息）和userName（管理员的名字），并且
+		//使之有可能从admin_category_edit.html中引用它。
 		model.addAttribute("userName",userName);
 		model.addAttribute("category",categoryEntity);
 		return "admin_category_edit.html";
 	}
 
 	/**
-	 * categoryの編集内容を保存する処理です。
-	 * ―画面から情報を受け取りcategoryテーブルに更新処理を行います。
-	 * ―リンクからcategoryIdを取得する
-	 * ―更新処理後は、category一覧画面にリダイレクトさせます。
+	 * -保存编辑到类别的过程。
+	 * -从屏幕接收信息并更新分类表的过程。
+	 * -从链接中获取categoryId。
+	 * -更新过程结束后，重定向到类别列表屏幕。
 	 */
 	@PostMapping("/update")
 	public String update(@RequestParam String categoryName,@RequestParam Long categoryId) {
@@ -157,14 +155,14 @@ public class CategoryController {
 	}
 
 	/**
-	 * categoryを削除させるための処理です。
-	 * categoryIdに紐づくレコードを探す
-	 * ―紐づくレコードを削除する
+	 * 删除类别的过程。
+	 * 找到与categoryId绑定的记录。
+	 * -删除与之相关的记录。
 	 */
-	//カテゴリー登録内容を削除
+	// 删除类别注册信息。
 	@PostMapping("/delete")
 	public String deleteCategory(@RequestParam Long categoryId) {
-		//Serviceクラスに値をわたし、削除処理を行う。
+		//将该值发送给Service并执行删除过程。
 		categoryService.delete(categoryId);
 		return "redirect:/admin/category/all";
 	}

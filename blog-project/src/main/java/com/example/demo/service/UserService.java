@@ -13,12 +13,12 @@ import com.example.demo.model.entity.UserEntity;
 public class UserService {
 	@Autowired
 	private UserDao userDao;
-	  //ユーザの情報を保存する
+	//存储用户信息。
 	public boolean createAccount(String userName,String userEmail, String password) {
-		//RegisterControllerから渡されるユーザ情報（ユーザーメールアドレス）を条件にDB検索で検索する
+		//RegisterController使用RegisterController传来的用户信息（用户电子邮件地址）作为条件，在DB搜索中进行搜索。
 		UserEntity userEntity = userDao.findByUserEmail(userEmail);
-		//RegisterControllerから渡されるユーザ情報（ユーザ名、パスワード）を条件にDB検索で検索した結果
-		//なかった場合には、保存
+		//作为DB搜索的结果，使用从RegisterController传来的用户信息（用户名，密码）作为一个条件
+		//如果没有找到，保存
 		if (userEntity==null) {
 			userDao.save(new UserEntity(userName,userEmail, password));
 			WebSecurityConfig.addUser(userEmail, password);
@@ -27,13 +27,13 @@ public class UserService {
 			return false;
 		}
 	}
-    //ユーザの一覧を取得する
+	// 获得一个用户列表
 	public List<UserEntity> getAllAccounts() {
 		return userDao.findAll();
 	}
 
-	//idを見つけるために
-	//コントローラーでわたってきたuserEmailを基にしてDBを検索
+	// 找到id
+	//根据控制器中出现的userEmail搜索数据库。
 	public UserEntity selectById(String userEmail) {
 		return userDao.findByUserEmail(userEmail);
 	}
